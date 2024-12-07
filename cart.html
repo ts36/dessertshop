@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>購物車</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <header class="bg-light py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+      <h1 class="h3">購物車</h1>
+      <a href="products.html" class="btn btn-secondary">回到商品列表</a>
+    </div>
+  </header>
+
+  <main class="container mt-4">
+    <h2>購物車內容</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>圖片</th>
+          <th>商品名稱</th>
+          <th>價格</th>
+          <th>數量</th>
+          <th>小計</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="cartItems">
+        <!-- 購物車商品列表會用 JavaScript 動態生成 -->
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    // 加載購物車數據
+    function loadCart() {
+      const cartItems = document.getElementById('cartItems');
+      cartItems.innerHTML = ''; // 清空列表
+
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = `<tr><td colspan="6" class="text-center">購物車是空的</td></tr>`;
+        return;
+      }
+
+      cart.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><img src="${item.image}" alt="${item.name}" width="50"></td>
+          <td>${item.name}</td>
+          <td>$${item.price}</td>
+          <td>${item.quantity}</td>
+          <td>$${item.price * item.quantity}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})">移除</button>
+          </td>
+        `;
+        cartItems.appendChild(row);
+      });
+    }
+
+    // 移除商品
+    function removeFromCart(productId) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart = cart.filter(item => item.id !== productId);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart(); // 重新加載購物車
+    }
+
+    // 初始化頁面
+    document.addEventListener('DOMContentLoaded', loadCart);
+  </script>
+</body>
+</html>
